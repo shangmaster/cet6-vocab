@@ -316,6 +316,11 @@
     } catch (e) { /* 不支持时静默 */ }
   }
 
+  /* 发音：优先播放在线真人语音（有道），失败才回退到系统语音合成。
+     判定逻辑：
+       - loadedmetadata / canplay / playing 任一发生 → 文件是好的，取消回退
+       - error 事件 / play() 被 reject → 立刻回退
+       - 5 秒内连元数据都没拿到（断网、被墙、接口挂了）→ 回退 */
   function say(word, accent) {
     if (!word) return;
     accent = accent === 'uk' ? 'uk' : 'us';
@@ -335,28 +340,26 @@
         audioCache.set(url, audio);
       }
       liveAudio = audio;
-      audio.currentTime = 0;
+      try { audio.currentTime = 0; } catch (e) { /* 尚未加载时忽略 */ }
 
-      let settled = false;
+      let healthy = false;   // 文件确认可用
+      let fellBack = false;
       let timer = null;
+
+      const cleanup = () => { if (timer) { clearTimeout(timer); timer = null; } };
+      const markHealthy = () => { healthy = true; cleanup(); };
       const fallback = () => {
-        if (settled) return;
-        settled = true;
-        if (timer) clearTimeout(timer);
+        if (healthy || fellBack) return;
+        fellBack = true;
+        cleanup();
         tts(word, accent);
       };
-      const ok = () => {
-        settled = true;
-        if (timer) clearTimeout(timer);
-      };
 
-      // 只有"真的失败"才回退到系统语音：加载出元数据 / 开始播放 / 加载到可播放，
-      // 三者任一发生就取消定时器，避免网络稍慢就被 TTS 顶掉。
-      audio.addEventListener('loadedmetadata', ok, { once: true });
-      audio.addEventListener('canplay', ok, { once: true });
-      audio.addEventListener('playing', ok, { once: true });
+      audio.addEventListener('loadedmetadata', markHealthy, { once: true });
+      audio.addEventListener('canplay', markHealthy, { once: true });
+      audio.addEventListener('playing', markHealthy, { once: true });
       audio.addEventListener('error', fallback, { once: true });
-      timer = setTimeout(fallback, 4000);
+      timer = setTimeout(fallback, 5000);
 
       const p = audio.play();
       if (p && typeof p.catch === 'function') p.catch(fallback);
