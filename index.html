@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CET-6 高频词汇通关手册 · 892 词 + 81 短语</title>
+<meta name="description" content="英语六级高频词汇学习站：英美双音标与真人发音、词根拆解、派生词族、闪卡记忆、随机测验与错词本。">
+<meta name="theme-color" content="#f5f1e8">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark">C6</span>
+    <span class="brand-text">
+      <strong>CET-6 高频词汇</strong>
+      <em>通关手册 · 892 词 + 81 短语</em>
+    </span>
+  </a>
+
+  <nav class="tabs" id="tabs" aria-label="功能切换">
+    <button class="tab is-active" data-view="vocab">词汇表</button>
+    <button class="tab" data-view="flash">闪卡</button>
+    <button class="tab" data-view="quiz">测验</button>
+    <button class="tab" data-view="wrong">错词本 <span class="badge" id="wrongBadge">0</span></button>
+    <button class="tab" data-view="phrase">高频短语</button>
+  </nav>
+
+  <button class="icon-btn" id="themeBtn" title="切换深色 / 浅色" aria-label="切换主题">
+    <span id="themeIcon">◐</span>
+  </button>
+</header>
+
+<main id="top">
+
+  <!-- ===== 概览 ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Vocabulary Sprint</p>
+      <h1>把六级高频词，<br>变成你的<b>条件反射</b>。</h1>
+      <p class="hero-sub">每个词都带美式 / 英式双音标与真人发音，配词根拆解和派生词族——按字母索引、闪卡循环、四选一测验、错词回收，一条闭环把 892 个核心词过完三遍。</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="heroStart">开始今日学习</button>
+        <button class="btn btn-ghost" id="heroQuiz">直接测验</button>
+      </div>
+      <p class="hero-tip" id="dailyWord">—</p>
+    </div>
+
+    <div class="hero-panel">
+      <div class="ring" id="ring" style="--p:0">
+        <div class="ring-inner">
+          <strong id="ringNum">0%</strong>
+          <span>已掌握</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="statTotal">0</b><span>总词数</span></div>
+        <div class="stat"><b id="statMastered">0</b><span>已掌握</span></div>
+        <div class="stat"><b id="statQuiz">0</b><span>答题数</span></div>
+        <div class="stat"><b id="statAcc">—</b><span>正确率</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 词汇表 ===== -->
+  <section class="view is-active" id="view-vocab">
+    <div class="toolbar">
+      <div class="search">
+        <span class="search-ico">⌕</span>
+        <input id="search" type="search" placeholder="搜英文、音标、释义、例句或派生词…" autocomplete="off">
+        <button class="search-clear" id="searchClear" hidden>×</button>
+      </div>
+      <div class="chips" id="filters">
+        <button class="chip is-active" data-filter="all">全部</button>
+        <button class="chip" data-filter="todo">未掌握</button>
+        <button class="chip" data-filter="done">已掌握</button>
+        <button class="chip" data-filter="star">收藏</button>
+        <button class="chip" data-filter="deriv">有派生词</button>
+      </div>
+      <div class="sortwrap">
+        <label for="sortSel">排序</label>
+        <select id="sortSel">
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="len">按词长</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="alpha" id="alpha"></div>
+
+    <p class="result-line"><span id="resultCount">0</span> 个词 <span id="resultHint"></span></p>
+
+    <div class="word-grid" id="wordGrid"></div>
+    <div class="loadmore-wrap"><button class="btn btn-ghost" id="loadMore">加载更多</button></div>
+  </section>
+
+  <!-- ===== 闪卡 ===== -->
+  <section class="view" id="view-flash">
+    <div class="flash-head">
+      <p class="eyebrow">Flashcards</p>
+      <h2>看词想义，翻面验证</h2>
+      <p class="muted">空格键翻面 · ← → 切换 · M 标记掌握 · 1 / 2 播放美音 / 英音</p>
+    </div>
+
+    <div class="flash-stage">
+      <button class="flash-nav" id="flashPrev" aria-label="上一个">‹</button>
+
+      <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="点击翻面">
+        <div class="flash-inner">
+          <div class="flash-face flash-front">
+            <span class="flash-tag" id="flashTag">核心词</span>
+            <h3 id="flashWord">—</h3>
+            <div class="flash-phon" id="flashPhonRow"></div>
+            <p class="flash-hint">点击卡片 / 空格键 查看释义</p>
+          </div>
+          <div class="flash-face flash-back">
+            <div class="fb-head">
+              <p class="pos" id="flashPos"></p>
+              <div class="flash-phon" id="flashPhonBack"></div>
+            </div>
+            <p class="meaning" id="flashMeaning"></p>
+            <div class="flash-forms" id="flashForms"></div>
+            <p class="example" id="flashExample"></p>
+            <p class="example-cn" id="flashExampleCn"></p>
+            <div class="flash-root" id="flashRoot"></div>
+            <div class="flash-deriv" id="flashDerivs"></div>
+            <p class="flash-hint">M = 已掌握 · X = 不认识</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="flash-nav" id="flashNext" aria-label="下一个">›</button>
+    </div>
+
+    <div class="flash-actions">
+      <button class="btn btn-ghost" id="flashSayUs">🔊 美音</button>
+      <button class="btn btn-ghost" id="flashSayUk">🔊 英音</button>
+      <button class="btn btn-soft" id="flashKnow">不认识（进错词本）</button>
+      <button class="btn btn-primary" id="flashMaster">已掌握</button>
+      <button class="btn btn-ghost" id="flashShuffle">⤨ 打乱</button>
+    </div>
+    <p class="flash-progress" id="flashProgress">—</p>
+  </section>
+
+  <!-- ===== 测验 ===== -->
+  <section class="view" id="view-quiz">
+    <div class="quiz-wrap">
+      <div class="quiz-top">
+        <div class="quiz-meta"><span id="quizIndex">第 1 / 10 题</span><span id="quizScore">得分 0</span></div>
+        <div class="bar"><i id="quizBar" style="width:0%"></i></div>
+      </div>
+
+      <div class="quiz-card">
+        <p class="quiz-kind" id="quizKind">英 → 中</p>
+        <h3 id="quizPrompt">—</h3>
+        <p class="quiz-sub" id="quizSub"></p>
+        <div class="options" id="quizOptions"></div>
+        <p class="quiz-feedback" id="quizFeedback"></p>
+      </div>
+
+      <div class="quiz-foot">
+        <button class="btn btn-primary" id="quizNext" disabled>下一题</button>
+        <button class="btn btn-ghost" id="quizRestart">重新开始</button>
+        <label class="quiz-len">题量
+          <select id="quizLen">
+            <option value="10">10 题</option>
+            <option value="20" selected>20 题</option>
+            <option value="30">30 题</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="quiz-summary" id="quizSummary" hidden></div>
+    </div>
+  </section>
+
+  <!-- ===== 错词本 ===== -->
+  <section class="view" id="view-wrong">
+    <div class="flash-head">
+      <p class="eyebrow">Review</p>
+      <h2>错词本</h2>
+      <p class="muted">测验答错、闪卡点“不认识”的词都会自动收进这里。</p>
+    </div>
+    <div class="wrong-actions">
+      <button class="btn btn-primary" id="wrongQuiz">用错词出一套题</button>
+      <button class="btn btn-ghost" id="wrongClear">清空错词本</button>
+    </div>
+    <div class="word-grid" id="wrongGrid"></div>
+    <p class="empty" id="wrongEmpty" hidden>还没有错词，去测验里练两题吧。</p>
+  </section>
+
+  <!-- ===== 短语 ===== -->
+  <section class="view" id="view-phrase">
+    <div class="flash-head">
+      <p class="eyebrow">Collocations</p>
+      <h2>六级高频短语 &amp; 搭配</h2>
+      <p class="muted">阅读和翻译里反复出现的那一批，按场景分组。</p>
+    </div>
+    <div class="phrase-tools">
+      <input id="phraseSearch" type="search" placeholder="筛选短语…" autocomplete="off">
+    </div>
+    <div class="phrase-list" id="phraseList"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>CET-6 高频词汇通关手册 · 学习进度保存在你自己的浏览器（localStorage）里，换设备不同步。</p>
+  <p class="muted">音标与发音：美式 / 英式各一套（有道词典语音库）；发音需联网，断网时自动回退到系统语音合成。</p>
+  <p class="muted">建议节奏：每天 40 词新学 + 20 词复习 + 1 组测验。</p>
+</footer>
+
+<script src="assets/data-1.js"></script>
+<script src="assets/data-2.js"></script>
+<script src="assets/data-3.js"></script>
+<script src="assets/data-4.js"></script>
+<script src="assets/data-5.js"></script>
+<script src="assets/data-6.js"></script>
+<script src="assets/forms.js"></script>
+<script src="assets/roots-1.js"></script>
+<script src="assets/roots-2.js"></script>
+<script src="assets/roots-3.js"></script>
+<script src="assets/roots-4.js"></script>
+<script src="assets/roots-5.js"></script>
+<script src="assets/roots-6.js"></script>
+<script src="assets/phonetics.js"></script>
+<script src="assets/derivs.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
