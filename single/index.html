@@ -5721,21 +5721,25 @@ window.CET6_DERIVS = Object.assign(window.CET6_DERIVS || {}, {
       audio.currentTime = 0;
 
       let settled = false;
+      let timer = null;
       const fallback = () => {
         if (settled) return;
         settled = true;
+        if (timer) clearTimeout(timer);
         tts(word, accent);
       };
-      // 断网 / 音频不可用时回退到系统语音
-      const timer = setTimeout(fallback, 1400);
-      audio.addEventListener('playing', () => {
+      const ok = () => {
         settled = true;
-        clearTimeout(timer);
-      }, { once: true });
-      audio.addEventListener('error', () => {
-        clearTimeout(timer);
-        fallback();
-      }, { once: true });
+        if (timer) clearTimeout(timer);
+      };
+
+      // 只有"真的失败"才回退到系统语音：加载出元数据 / 开始播放 / 加载到可播放，
+      // 三者任一发生就取消定时器，避免网络稍慢就被 TTS 顶掉。
+      audio.addEventListener('loadedmetadata', ok, { once: true });
+      audio.addEventListener('canplay', ok, { once: true });
+      audio.addEventListener('playing', ok, { once: true });
+      audio.addEventListener('error', fallback, { once: true });
+      timer = setTimeout(fallback, 4000);
 
       const p = audio.play();
       if (p && typeof p.catch === 'function') p.catch(fallback);
