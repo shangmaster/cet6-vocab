@@ -2,10 +2,18 @@
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CET-6 高频词汇通关手册 · 892 词 + 81 短语</title>
 <meta name="description" content="英语六级高频词汇学习站：英美双音标与真人发音、词根拆解、派生词族、闪卡记忆、随机测验与错词本。">
 <meta name="theme-color" content="#f5f1e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CET-6 词汇">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="assets/manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -210,7 +218,19 @@
   <p>CET-6 高频词汇通关手册 · 学习进度保存在你自己的浏览器（localStorage）里，换设备不同步。</p>
   <p class="muted">音标与发音：美式 / 英式各一套（有道词典语音库）；发音需联网，断网时自动回退到系统语音合成。</p>
   <p class="muted">建议节奏：每天 40 词新学 + 20 词复习 + 1 组测验。</p>
+  <p class="muted install-hint" id="installHint" hidden>
+    提示：在手机浏览器菜单里选「添加到主屏幕」，就能像 App 一样打开，断网也能用。
+  </p>
 </footer>
+
+<!-- 手机端底部导航（拇指可达） -->
+<nav class="mobile-nav" id="mobileNav" aria-label="底部功能切换">
+  <button class="mnav is-active" data-view="vocab"><span class="mnav-i">▤</span><span class="mnav-t">词汇</span></button>
+  <button class="mnav" data-view="flash"><span class="mnav-i">◧</span><span class="mnav-t">闪卡</span></button>
+  <button class="mnav" data-view="quiz"><span class="mnav-i">◇</span><span class="mnav-t">测验</span></button>
+  <button class="mnav" data-view="wrong"><span class="mnav-i">★</span><span class="mnav-t">错词<b class="mnav-badge" id="mnavBadge" hidden>0</b></span></button>
+  <button class="mnav" data-view="phrase"><span class="mnav-i">≡</span><span class="mnav-t">短语</span></button>
+</nav>
 
 <script src="assets/data-1.js"></script>
 <script src="assets/data-2.js"></script>
@@ -228,5 +248,13 @@
 <script src="assets/phonetics.js"></script>
 <script src="assets/derivs.js"></script>
 <script src="assets/app.js"></script>
+<script>
+/* 注册 Service Worker：装到主屏后断网也能开 */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('assets/sw.js').catch(function () { /* 不支持就静默跳过 */ });
+  });
+}
+</script>
 </body>
 </html>

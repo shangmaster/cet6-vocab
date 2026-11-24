@@ -132,6 +132,11 @@
 
     $('#wrongBadge').textContent = store.wrong.size;
     $('#wrongBadge').hidden = store.wrong.size === 0;
+    const mb = $('#mnavBadge');
+    if (mb) {
+      mb.textContent = store.wrong.size;
+      mb.hidden = store.wrong.size === 0;
+    }
   }
 
   /* ---------- 每日一词 ---------- */
@@ -149,6 +154,7 @@
   function switchView(name) {
     state.view = name;
     $$('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.view === name));
+    $$('.mnav').forEach((t) => t.classList.toggle('is-active', t.dataset.view === name));
     $$('.view').forEach((v) => v.classList.toggle('is-active', v.id === 'view-' + name));
     if (name !== 'vocab') $('#hero').style.display = 'none';
     else $('#hero').style.display = '';
@@ -679,6 +685,27 @@
       const t = e.target.closest('.tab');
       if (t) switchView(t.dataset.view);
     });
+
+    // 手机底部导航
+    const mnav = $('#mobileNav');
+    if (mnav) {
+      mnav.addEventListener('click', (e) => {
+        const b = e.target.closest('.mnav');
+        if (b) switchView(b.dataset.view);
+      });
+    }
+
+    // 手机端首次访问提示"添加到主屏幕"
+    try {
+      const standalone = window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      const hint = $('#installHint');
+      if (hint && isMobile && !standalone && !localStorage.getItem('cet6.hint.seen')) {
+        hint.hidden = false;
+        localStorage.setItem('cet6.hint.seen', '1');
+      }
+    } catch (e) { /* 忽略 */ }
 
     // Hero 按钮
     $('#heroStart').addEventListener('click', () => switchView('flash'));

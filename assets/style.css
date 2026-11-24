@@ -580,6 +580,14 @@ main {
   font-size: 9.5px;
   line-height: 1;
   transition: all .15s;
+  /* 移动端触摸目标放大到 30px，视觉仍是小圆点（用负外边距抵消占位） */
+  position: relative;
+}
+.ph-play::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
 }
 .ph-play:hover {
   border-color: var(--accent);
@@ -1242,24 +1250,151 @@ main {
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
-  .tabs { order: 3; width: 100%; margin-left: 0; }
-  .icon-btn { margin-left: auto; }
+  .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 14px; }
+  /* 窄屏下标签栏横向滑动，不换行、不截断 */
+  .tabs {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .tab { padding: 8px 13px; font-size: 12.5px; }
+  .icon-btn { margin-left: auto; width: 38px; height: 38px; }
   .word-grid { grid-template-columns: 1fr; }
   .hero-panel { flex-direction: column; align-items: stretch; }
   .stats { grid-template-columns: repeat(2, 1fr); max-width: none; }
   .ring { align-self: center; }
   .flash-stage { gap: 4px; }
-  .flash-nav { width: 34px; height: 34px; font-size: 18px; }
-  .flashcard, .flash-inner { min-height: 400px; }
+  .flash-nav { width: 38px; height: 38px; font-size: 19px; }
+  /* 手机上：两面各自定高、绝对叠放。背面内容多就自己滚，
+     不再因为"取两面较高者"把正面撑出大片空白 */
+  .flashcard { min-height: 0; }
+  .flash-inner {
+    display: block;
+    min-height: 0;
+    height: 340px;
+  }
+  .flash-face {
+    position: absolute;
+    inset: 0;
+    padding: 22px 18px;
+  }
+  .flash-back {
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .phrase-group ul { grid-template-columns: 1fr; }
   .quiz-len { margin-left: 0; }
   .toolbar { gap: 9px; }
   .search { flex: 1 1 100%; }
-  .alpha { gap: 2px; }
-  .alpha button { min-width: 24px; height: 24px; font-size: 11px; }
+  .alpha { gap: 3px; }
+  .alpha button { min-width: 28px; height: 28px; font-size: 11.5px; }
   .hero-tip { font-size: 13.5px; }
   .wcard-tools { opacity: 1; }
+  /* 手机上触摸目标放大：小圆点保持视觉尺寸，点击热区 30px */
+  .ph-play { width: 24px; height: 24px; font-size: 11px; }
+  .ph-play::after { inset: -6px; }
+  .mini { width: 32px; height: 32px; font-size: 14px; }
+  .btn { padding: 11px 18px; }
+  .flash-actions { gap: 8px; }
+  .flash-actions .btn { flex: 1 1 calc(50% - 8px); }
+  .dv-w { padding: 3px 0; }
+  main { padding: 0 14px 60px; }
+  .foot { padding: 22px 14px 40px; }
+  /* 长单词不撑破卡片 */
+  .wcard h3 { font-size: 20px; word-break: break-word; }
+  .flash-front h3 { font-size: clamp(26px, 9vw, 38px); word-break: break-word; }
+  .quiz-card h3 { word-break: break-word; }
+  .phons { gap: 4px 9px; }
+}
+
+/* 极窄屏（320px / 老机型） */
+@media (max-width: 380px) {
+  .brand-text strong { font-size: 13px; }
+  .tab { padding: 7px 10px; font-size: 12px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .flash-actions .btn { flex: 1 1 100%; }
+  .ph-ipa { font-size: 11px; }
+  .wroot-row { grid-template-columns: 28px 1fr; gap: 5px; }
+}
+
+/* 触摸设备：去掉 hover 位移，避免"点一下就跳" */
+@media (hover: none) {
+  .wcard:hover { transform: none; box-shadow: var(--shadow-sm); border-color: var(--line); }
+  .phrase-group li:hover { transform: none; }
+  .btn:hover { box-shadow: none; }
+  .ph-play:hover { transform: none; border-color: var(--line-soft); color: var(--muted); }
+  .ph-play:active { transform: scale(.92); border-color: var(--accent); color: var(--accent); }
+}
+
+/* ---------- 手机底部导航 ---------- */
+.mobile-nav { display: none; }
+
+@media (max-width: 640px) {
+  .mobile-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 60;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 18px rgba(60, 45, 25, .07);
+  }
+  .mnav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    border-radius: 10px;
+    transition: color .16s, background .16s;
+  }
+  .mnav-i { font-size: 16px; line-height: 1; }
+  .mnav-t {
+    font-size: 10.5px;
+    letter-spacing: .02em;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .mnav.is-active { color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); }
+  .mnav-badge {
+    min-width: 14px;
+    padding: 0 3px;
+    font-size: 9px;
+    line-height: 13px;
+    text-align: center;
+    border-radius: 99px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  /* 底部导航不挡住页脚 */
+  body { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
+  .foot { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+  .install-hint {
+    margin-top: 10px !important;
+    padding: 9px 12px;
+    border-radius: 9px;
+    background: var(--surface-2);
+    border: 1px dashed var(--line);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  /* 闪卡操作按钮离底部导航远一点 */
+  .flash-actions { margin-bottom: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
